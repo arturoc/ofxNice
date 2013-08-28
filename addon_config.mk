@@ -68,6 +68,17 @@ common:
 	# a specific platform
     # ADDON_INCLUDES_EXCLUDE =
 
+linux:
+	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	
+linux64:
+	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	
+linuxarmv6l:
+	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	
+linuxarmv7l:
+	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
 	
 win_cb:
 	
