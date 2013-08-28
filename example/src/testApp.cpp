@@ -1,0 +1,90 @@
+#include "testApp.h"
+
+//--------------------------------------------------------------
+void testApp::setup(){
+	agentServer.setup("77.72.174.165",3478,true,NULL,NICE_COMPATIBILITY_RFC5245);
+	streamServer.setup(agentServer,1);
+	agentServer.addStream(&streamServer);
+	streamServer.listen();
+	streamServer.gatherLocalCandidates();
+	ofAddListener(streamServer.localCandidatesGathered,this,&testApp::onServerLocalCandidatesGathered);
+
+	agentClient.setup("77.72.174.165",3478,false,NULL,NICE_COMPATIBILITY_RFC5245);
+	streamClient.setup(agentClient,1);
+	agentClient.addStream(&streamClient);
+	streamClient.listen();
+	streamClient.gatherLocalCandidates();
+	ofAddListener(streamClient.localCandidatesGathered,this,&testApp::onClientLocalCandidatesGathered);
+}
+
+void testApp::onClientLocalCandidatesGathered(vector<ofxICECandidate> & candidates){
+	cout << "setting server remote info " << endl;
+	streamServer.setRemoteCredentials(streamClient.getLocalUFrag(),streamClient.getLocalPwd());
+	streamServer.setRemoteCandidates(candidates);
+}
+
+void testApp::onServerLocalCandidatesGathered(vector<ofxICECandidate> & candidates){
+	cout << "setting client remote info " << endl;
+	streamClient.setRemoteCredentials(streamServer.getLocalUFrag(),streamServer.getLocalPwd());
+	streamClient.setRemoteCandidates(candidates);
+}
+
+//--------------------------------------------------------------
+void testApp::update(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::draw(){
+
+}
+
+//--------------------------------------------------------------
+void testApp::keyPressed(int key){
+	if(key!=OF_KEY_RETURN){
+		textToSend += (char)key;
+	}else{
+		streamServer.sendData(textToSend,1);
+		textToSend = "";
+	}
+}
+
+//--------------------------------------------------------------
+void testApp::keyReleased(int key){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseMoved(int x, int y ){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mousePressed(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotMessage(ofMessage msg){
+
+}
+
+//--------------------------------------------------------------
+void testApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
