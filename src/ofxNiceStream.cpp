@@ -10,6 +10,7 @@
 #include "ofUtils.h"
 #include "ofGstUtils.h"
 #include "ofxNiceAgent.h"
+#include <glib/gslist.h>
 
 
 static const gchar *candidate_type_name[] = {"host", "srflx", "prflx", "relay"};
@@ -69,7 +70,10 @@ void ofxNiceStream::setRemoteCredentials(const string & ufrag, const string & pw
 }
 
 void ofxNiceStream::setRemoteCandidates(const vector<ofxICECandidate> & candidates){
-	vector<GSList *> candidates_lists(numberComponents,NULL);
+	GSList * candidates_lists[numberComponents];
+    for(int i=0;i<numberComponents;i++){
+        candidates_lists[i] = NULL;
+    }
 
 	for(size_t j=0;j<candidates.size();j++){
 		const ofxICECandidate & candidate =  candidates[j];
@@ -97,7 +101,7 @@ void ofxNiceStream::setRemoteCandidates(const vector<ofxICECandidate> & candidat
 		candidates_lists[candidate.component-1] = g_slist_append(candidates_lists[candidate.component-1],niceCandidate);
 	}
 
-	for(size_t i=0;i<candidates_lists.size();i++){
+	for(int i=0;i<numberComponents;i++){
 		ofLogNotice(logName) << "adding remote candidates for component " << i+1 << " " << candidates_lists[i];
 		if(candidates_lists[i] && nice_agent_set_remote_candidates(agent->getAgent(),streamID,i+1,candidates_lists[i])<1){
 			ofLogError(logName) << "Error setting remote candidates for component " << i;
