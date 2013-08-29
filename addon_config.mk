@@ -70,26 +70,34 @@ common:
 
 linux:
 	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	ADDON_LDFLAGS = -lresolv
 	
 linux64:
 	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	ADDON_LDFLAGS = -lresolv
 	
 linuxarmv6l:
 	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	ADDON_LDFLAGS = -lresolv
 	
 linuxarmv7l:
 	ADDON_INCLUDES_EXCLUDE = libs/libnice/%
+	ADDON_LDFLAGS = -lresolv
 	
 win_cb:
 	
 vs:
 	
 android/armeabi:	
+	ADDON_LDFLAGS = -lresolv
 	
 android/armeabi-v7a:	
+	ADDON_LDFLAGS = -lresolv
 
 osx:
+	ADDON_LDFLAGS = -lresolv
     
 ios:
+	ADDON_LDFLAGS = -lresolv
 
 
