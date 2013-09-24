@@ -8,6 +8,7 @@ void testApp::setup(){
 	streamServer.listen();
 	streamServer.gatherLocalCandidates();
 	ofAddListener(streamServer.localCandidatesGathered,this,&testApp::onServerLocalCandidatesGathered);
+	ofAddListener(streamServer.dataReceived,this,&testApp::onServerDataReceived);
 
 	agentClient.setup("77.72.174.165",3478,false,NULL,NICE_COMPATIBILITY_RFC5245);
 	streamClient.setup(agentClient,1);
@@ -15,6 +16,7 @@ void testApp::setup(){
 	streamClient.listen();
 	streamClient.gatherLocalCandidates();
 	ofAddListener(streamClient.localCandidatesGathered,this,&testApp::onClientLocalCandidatesGathered);
+	ofAddListener(streamClient.dataReceived,this,&testApp::onClientDataReceived);
 }
 
 void testApp::onClientLocalCandidatesGathered(vector<ofxICECandidate> & candidates){
@@ -29,6 +31,13 @@ void testApp::onServerLocalCandidatesGathered(vector<ofxICECandidate> & candidat
 	streamClient.setRemoteCandidates(candidates);
 }
 
+void testApp::onServerDataReceived(ofBuffer & data){
+	cout << "server: " << data << endl;
+}
+
+void testApp::onClientDataReceived(ofBuffer & data){
+	cout << "client " << data << endl;
+}
 //--------------------------------------------------------------
 void testApp::update(){
 
@@ -45,6 +54,7 @@ void testApp::keyPressed(int key){
 		textToSend += (char)key;
 	}else{
 		streamServer.sendData(textToSend,1);
+		streamClient.sendData(textToSend,1);
 		textToSend = "";
 	}
 }

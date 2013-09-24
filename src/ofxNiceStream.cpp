@@ -19,10 +19,12 @@ static const gchar *state_name[] = {"disconnected", "gathering", "connecting",
                                     "connected", "ready", "failed"};
 
 
-void ofxNiceStream::cb_nice_recv(NiceAgent *agent, guint stream_id, guint component_id,
-    guint len, gchar *buf, gpointer data)
+void ofxNiceStream::cb_nice_recv(NiceAgent *agent, guint stream_id, guint component_id, guint len, gchar *buf, gpointer data)
 {
-	ofLogNotice() << component_id << ": " << buf;
+	ofxNiceStream * niceStream = (ofxNiceStream*)data;
+
+	ofBuffer buffer(buf,len);
+	ofNotifyEvent(niceStream->dataReceived,buffer,niceStream);
 }
 
 ofxNiceStream::ofxNiceStream()
@@ -121,12 +123,12 @@ string ofxNiceStream::getLocalPwd(){
 	return pwd;
 }
 
-void ofxNiceStream::sendData(const string & data, int component){
-	nice_agent_send(agent->getAgent(),streamID,component,data.size()+1,data.c_str());
+int ofxNiceStream::sendData(const string & data, int component){
+	return nice_agent_send(agent->getAgent(),streamID,component,data.size()+1,data.c_str());
 }
 
-void ofxNiceStream::sendRawData(const char * data, size_t size, int component){
-	nice_agent_send(agent->getAgent(),streamID,component,size,data);
+int ofxNiceStream::sendRawData(const char * data, size_t size, int component){
+	return nice_agent_send(agent->getAgent(),streamID,component,size,data);
 }
 
 NiceAgent * ofxNiceStream::getAgent(){
@@ -209,6 +211,10 @@ void ofxNiceStream::stateChanged(guint component_id, guint state){
 
 	if (state == NICE_COMPONENT_STATE_READY) {
 		ofLogNotice(logName) << "nice ready for component " << component_id;
+		int componentId = component_id;
+		ofNotifyEvent(componentReady,componentId,this);
+	} else if(state == NICE_COMPONENT_STATE_CONNECTED){
+		ofLogNotice(logName) << "nice connected for component " << component_id;
 	} else if (state == NICE_COMPONENT_STATE_FAILED) {
 		ofLogError(logName) << "nice failed for component " << component_id;
 	}
@@ -216,4 +222,9 @@ void ofxNiceStream::stateChanged(guint component_id, guint state){
 
 void ofxNiceStream::pairSelected(guint component_id, gchar *lfoundation,  gchar *rfoundation){
 	ofLogError(logName) << "selected pair " << lfoundation << ", " <<  rfoundation << " for component " << component_id;
+}
+
+void ofxNiceStream::reliableTransportWritable(guint component_id){
+	int componentId = component_id;
+	ofNotifyEvent(reliableComponentWritable,componentId,this);
 }

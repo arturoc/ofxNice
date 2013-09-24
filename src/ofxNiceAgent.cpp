@@ -22,39 +22,43 @@ ofxNiceAgent::~ofxNiceAgent() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofxNiceAgent::cb_candidate_gathering_done(NiceAgent *agent, guint stream_id, gpointer data){
-
-	ofxNiceAgent * client = (ofxNiceAgent *) data;
+void ofxNiceAgent::cb_candidate_gathering_done(NiceAgent *agent, guint stream_id, ofxNiceAgent * client){
 	client->streamsIndex[stream_id]->gatheringDone();
 }
 
 void ofxNiceAgent::cb_component_state_changed(NiceAgent *agent, guint stream_id,
     guint component_id, guint state,
-    gpointer data)
+    ofxNiceAgent * client)
 {
-
-	ofxNiceAgent * client = (ofxNiceAgent *) data;
 	client->streamsIndex[stream_id]->stateChanged(component_id, state);
 }
 
 
 void ofxNiceAgent::cb_new_selected_pair(NiceAgent *agent, guint stream_id,
     guint component_id, gchar *lfoundation,
-    gchar *rfoundation, gpointer data)
+    gchar *rfoundation, ofxNiceAgent * client)
 {
-	ofxNiceAgent * client = (ofxNiceAgent *) data;
 	client->streamsIndex[stream_id]->pairSelected(component_id,lfoundation,rfoundation);
 
 }
 
-void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop, NiceCompatibility compatibility){
+void ofxNiceAgent::cb_reliable_transport_writable(NiceAgent *agent, guint stream_id,  guint component_id, ofxNiceAgent * client)
+{
+	client->streamsIndex[stream_id]->reliableTransportWritable(component_id);
+}
+
+void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop, NiceCompatibility compatibility, bool reliable){
 	if(mainLoop){
 		ctx = g_main_loop_get_context(mainLoop);
 	}else{
 		ofGstUtils::startGstMainLoop();
 		ctx = g_main_loop_get_context(ofGstUtils::getGstMainLoop());
 	}
-	agent = nice_agent_new(ctx,compatibility);
+	if(reliable){
+		agent = nice_agent_new_reliable(ctx,compatibility);
+	}else{
+		agent = nice_agent_new(ctx,compatibility);
+	}
 
 
 	g_object_set(G_OBJECT(agent), "stun-server", stunServer.c_str(), NULL);
@@ -67,6 +71,10 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 	g_signal_connect(G_OBJECT(agent), "new-selected-pair", G_CALLBACK(cb_new_selected_pair), this);
 
 	g_signal_connect(G_OBJECT(agent), "component-state-changed", G_CALLBACK(cb_component_state_changed), this);
+
+	if(reliable){
+		g_signal_connect(G_OBJECT(agent), "reliable-transport-writable", G_CALLBACK(cb_reliable_transport_writable), this);
+	}
 }
 
 GMainContext * ofxNiceAgent::getContext(){

@@ -13,6 +13,9 @@ class testApp : public ofBaseApp{
 		void onClientLocalCandidatesGathered(vector<ofxICECandidate> & candidates);
 		void onServerLocalCandidatesGathered(vector<ofxICECandidate> & candidates);
 
+		void onServerDataReceived(ofBuffer & data);
+		void onClientDataReceived(ofBuffer & data);
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );

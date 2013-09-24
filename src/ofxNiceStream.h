@@ -11,6 +11,7 @@
 #include <agent.h>
 #include "ofConstants.h"
 #include "ofEvents.h"
+#include "ofFileUtils.h"
 
 
 struct ofxICECandidate{
@@ -39,13 +40,16 @@ public:
 	void gatherLocalCandidates();
 	void setRemoteCredentials(const string & ufrag, const string & pwd);
 	void setRemoteCandidates(const vector<ofxICECandidate> & candidates);
-	void sendData(const string & data, int component = 1);
-	void sendRawData(const char * data, size_t size, int component = 1);
+	int sendData(const string & data, int component = 1);
+	int sendRawData(const char * data, size_t size, int component = 1);
 
 	string getLocalUFrag();
 	string getLocalPwd();
 
-	ofEvent < vector<ofxICECandidate> > localCandidatesGathered;
+	ofEvent <vector<ofxICECandidate> > localCandidatesGathered;
+	ofEvent <ofBuffer> dataReceived;
+	ofEvent <int> componentReady;
+	ofEvent <int> reliableComponentWritable;
 
 	NiceAgent * getAgent();
 	int getStreamID();
@@ -59,6 +63,8 @@ private:
 	void gatheringDone();
 	void stateChanged(guint component_id, guint state);
 	void pairSelected(guint component_id, gchar *lfoundation,  gchar *rfoundation);
+	void reliableTransportWritable(guint component_id);
+
 	static void cb_nice_recv(NiceAgent *agent, guint stream_id, guint component_id,
 	    guint len, gchar *buf, gpointer data);
 

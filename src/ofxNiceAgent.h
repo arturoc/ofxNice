@@ -19,7 +19,7 @@ public:
 	ofxNiceAgent();
 	virtual ~ofxNiceAgent();
 
-	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245);
+	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
 	void addStream(ofxNiceStream * stream);
 
 	NiceAgent * getAgent();
@@ -31,16 +31,14 @@ private:
 	map<guint,ofxNiceStream*> streamsIndex;
 
 	// nice callbacks
-	static void cb_candidate_gathering_done(NiceAgent *agent, guint stream_id,
-	    gpointer data);
+	static void cb_candidate_gathering_done(NiceAgent *agent, guint stream_id, ofxNiceAgent * client);
 	static void cb_new_selected_pair(NiceAgent *agent, guint stream_id,
 	    guint component_id, gchar *lfoundation,
-	    gchar *rfoundation, gpointer data);
+	    gchar *rfoundation, ofxNiceAgent * client);
 	static void cb_component_state_changed(NiceAgent *agent, guint stream_id,
 	    guint component_id, guint state,
-	    gpointer data);
-	static void cb_nice_recv(NiceAgent *agent, guint stream_id, guint component_id,
-	    guint len, gchar *buf, gpointer data);
+	    ofxNiceAgent * client);
+	static void cb_reliable_transport_writable(NiceAgent *agent, guint stream_id,  guint component_id, ofxNiceAgent * client);
 };
 
 #endif /* OFXNICEAGENT_H_ */
