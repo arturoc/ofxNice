@@ -80,7 +80,7 @@ void ofxNiceStream::setRemoteCandidates(const vector<ofxICECandidate> & candidat
 	for(size_t j=0;j<candidates.size();j++){
 		const ofxICECandidate & candidate =  candidates[j];
 
-		ofLogNotice(logName) << "creating candidate for component " << candidate.component;
+		ofLogVerbose(logName) << "creating candidate for component " << candidate.component;
 		NiceCandidate * niceCandidate;
 		if(candidate.type=="host"){
 			niceCandidate = nice_candidate_new(NICE_CANDIDATE_TYPE_HOST);
@@ -104,7 +104,7 @@ void ofxNiceStream::setRemoteCandidates(const vector<ofxICECandidate> & candidat
 	}
 
 	for(int i=0;i<numberComponents;i++){
-		ofLogNotice(logName) << "adding remote candidates for component " << i+1 << " " << candidates_lists[i];
+		ofLogVerbose(logName) << "adding remote candidates for component " << i+1 << " " << candidates_lists[i];
 		if(candidates_lists[i] && nice_agent_set_remote_candidates(agent->getAgent(),streamID,i+1,candidates_lists[i])<1){
 			ofLogError(logName) << "Error setting remote candidates for component " << i;
 		}
@@ -145,7 +145,7 @@ string ofxNiceStream::getName(){
 }
 
 void ofxNiceStream::gatheringDone(){
-	ofLogNotice(logName) << "candidate gathering done";
+	ofLogVerbose(logName) << "candidate gathering done";
 
 	gchar *local_ufrag = NULL;
 	gchar *local_password = NULL;
@@ -158,7 +158,7 @@ void ofxNiceStream::gatheringDone(){
 	}
 
 
-	ofLogNotice(logName) << local_ufrag << " " << local_password;
+	ofLogVerbose(logName) << local_ufrag << " " << local_password;
 
 
 	vector<ofxICECandidate> candidates;
@@ -177,7 +177,7 @@ void ofxNiceStream::gatheringDone(){
 			nice_address_to_string(&c->addr, ipaddr);
 
 			// (foundation),(prio),(addr),(port),(type)
-			ofLogNotice(logName) <<
+			ofLogVerbose(logName) <<
 				"component: " << i << " " <<
 				" priority: " << c->priority << " " <<
 				" address: " << ipaddr << " " <<
@@ -207,21 +207,25 @@ void ofxNiceStream::gatheringDone(){
 
 
 void ofxNiceStream::stateChanged(guint component_id, guint state){
-	ofLogNotice(logName) << "state changed for component " << component_id << " " << state_name[state];
+	ofLogVerbose(logName) << "state changed for component " << component_id << " " << state_name[state];
 
 	if (state == NICE_COMPONENT_STATE_READY) {
-		ofLogNotice(logName) << "nice ready for component " << component_id;
+		ofLogVerbose(logName) << "nice ready for component " << component_id;
 		int componentId = component_id;
 		ofNotifyEvent(componentReady,componentId,this);
 	} else if(state == NICE_COMPONENT_STATE_CONNECTED){
-		ofLogNotice(logName) << "nice connected for component " << component_id;
+		int componentId = component_id;
+		ofNotifyEvent(componentConnected,componentId,this);
+		ofLogVerbose(logName) << "nice connected for component " << component_id;
 	} else if (state == NICE_COMPONENT_STATE_FAILED) {
+		int componentId = component_id;
+		ofNotifyEvent(componentFailed,componentId,this);
 		ofLogError(logName) << "nice failed for component " << component_id;
 	}
 }
 
 void ofxNiceStream::pairSelected(guint component_id, gchar *lfoundation,  gchar *rfoundation){
-	ofLogError(logName) << "selected pair " << lfoundation << ", " <<  rfoundation << " for component " << component_id;
+	ofLogVerbose(logName) << "selected pair " << lfoundation << ", " <<  rfoundation << " for component " << component_id;
 }
 
 void ofxNiceStream::reliableTransportWritable(guint component_id){

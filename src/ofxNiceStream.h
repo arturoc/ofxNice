@@ -49,6 +49,8 @@ public:
 	ofEvent <vector<ofxICECandidate> > localCandidatesGathered;
 	ofEvent <ofBuffer> dataReceived;
 	ofEvent <int> componentReady;
+	ofEvent <int> componentConnected;
+	ofEvent <int> componentFailed;
 	ofEvent <int> reliableComponentWritable;
 
 	NiceAgent * getAgent();
