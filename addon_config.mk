@@ -85,8 +85,13 @@ linuxarmv7l:
 	ADDON_LDFLAGS = -lresolv
 	
 win_cb:
+	ADDON_LDFLAGS = -lIphlpapi -L$(GSTREAMER_1_0_ROOT_X86)lib -lgstreamer-1.0 -lgstapp-1.0 -lgstvideo-1.0 -lgstbase-1.0 -lgstnet-1.0 -lgstaudio-1.0 -lgio-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lffi -lws2_32 -lole32 -lwinmm -lshlwapi  -lintl -lglib-2.0
 	
 vs:
+	ADDON_LIBS = libs/libnice/lib/vs/libnice.lib
+	ADDON_LIBS += libs/libnice/lib/vs/gstnice.lib
+	ADDON_DLLS_TO_COPY = libs/libnice/lib/vs/libnice.dll
+	ADDON_LIBS += Iphlpapi.lib
 	
 android/armeabi:	
 	ADDON_LDFLAGS = -lresolv
