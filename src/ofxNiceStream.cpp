@@ -72,7 +72,7 @@ void ofxNiceStream::setRemoteCredentials(const string & ufrag, const string & pw
 }
 
 void ofxNiceStream::setRemoteCandidates(const vector<ofxICECandidate> & candidates){
-	vector<GSList *> candidates_lists(numberComponents,NULL);
+	vector<GSList *> candidates_lists(numberComponents,(GSList*)NULL);
 
 	for(size_t j=0;j<candidates.size();j++){
 		const ofxICECandidate & candidate =  candidates[j];
