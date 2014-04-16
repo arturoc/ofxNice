@@ -64,6 +64,8 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 	g_object_set(G_OBJECT(agent), "stun-server", stunServer.c_str(), NULL);
 	g_object_set(G_OBJECT(agent), "stun-server-port", stunServerPort, NULL);
 	g_object_set(G_OBJECT(agent), "controlling-mode", controlling?1:0, NULL);
+	//TODO: activating upnp crashes for some reason
+	g_object_set(G_OBJECT(agent), "upnp", FALSE, NULL);
 
 	// Connect to the signals
 	g_signal_connect(G_OBJECT(agent), "candidate-gathering-done", G_CALLBACK(cb_candidate_gathering_done), this);

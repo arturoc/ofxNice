@@ -14,16 +14,35 @@
 
 class ofxNiceStream;
 
+/// ofxNiceAgent represents an ICE agent. The ICE protocol allows to send data across
+/// NAT routers. The way it works is by using a third party server usually only for stablishing
+/// a connection. The peer that wants to start a connection connects to a STUNT server sending some
+/// UDP pacakges to it, that way the NAT router keeps an open port to receive the answer, in most
+/// routers it doens't matter where that answer comes from it'll be redirected to the internal
+/// computer that initiated the connection allowing a peer to peer connection across NAT.
+///
+/// This class in particular represents an agent, that is the object responsible for opening the
+/// connection to the STUNT server. An agent can contain several streams that will be used for sending
+/// different data like video, audio... to the other peer
 class ofxNiceAgent {
 public:
 	ofxNiceAgent();
 	virtual ~ofxNiceAgent();
 
+	/// starts a connection with the STUNT server specifying it's address, port,
+	/// if this side is controlling the connection (usually if it's the side that initiated the
+	/// connection.
+	/// optionally we can specify a glib events loop, the ICE protocol specification we are
+	/// using and if the connection should be reliable (TCP over UDP)
 	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
+
+	/// add a stream to this agent
 	void addStream(ofxNiceStream * stream);
 
+	/// get the internal NiceAgent, usually only for internal usage of the addon
 	NiceAgent * getAgent();
 
+	/// get the glib context, usually only for internal usage of the addon
 	GMainContext * getContext();
 private:
 	NiceAgent * agent;
