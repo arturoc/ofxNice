@@ -13,5 +13,7 @@
 #include "ofxNiceAgent.h"
 #include "ofxNiceStream.h"
 
+void ofxNiceEnableDebug();
+void ofxNiceDisableDebug();
 
 #endif /* OFXNICE_H_ */

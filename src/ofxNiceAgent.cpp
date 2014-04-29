@@ -60,7 +60,6 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 		agent = nice_agent_new(ctx,compatibility);
 	}
 
-
 	g_object_set(G_OBJECT(agent), "stun-server", stunServer.c_str(), NULL);
 	g_object_set(G_OBJECT(agent), "stun-server-port", stunServerPort, NULL);
 	g_object_set(G_OBJECT(agent), "controlling-mode", controlling?1:0, NULL);
@@ -90,4 +89,13 @@ void ofxNiceAgent::addStream(ofxNiceStream * stream){
 
 NiceAgent * ofxNiceAgent::getAgent(){
 	return agent;
+}
+
+
+void ofxNiceEnableDebug(){
+	nice_debug_enable(true);
+}
+
+void ofxNiceDisableDebug(){
+	nice_debug_disable(true);
 }
