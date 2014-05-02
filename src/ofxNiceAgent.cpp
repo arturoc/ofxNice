@@ -93,9 +93,17 @@ NiceAgent * ofxNiceAgent::getAgent(){
 
 
 void ofxNiceEnableDebug(){
+#ifdef TARGET_LINUX
 	nice_debug_enable(true);
+#else
+	nice_debug_enable();
+#endif
 }
 
 void ofxNiceDisableDebug(){
+#ifdef TARGET_LINUX
 	nice_debug_disable(true);
+#else
+	nice_debug_disable();
+#endif
 }
