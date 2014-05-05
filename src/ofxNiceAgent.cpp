@@ -96,7 +96,7 @@ void ofxNiceEnableDebug(){
 #ifdef TARGET_LINUX
 	nice_debug_enable(true);
 #else
-	nice_debug_enable();
+	stun_debug_enable();
 #endif
 }
 
@@ -104,6 +104,6 @@ void ofxNiceDisableDebug(){
 #ifdef TARGET_LINUX
 	nice_debug_disable(true);
 #else
-	nice_debug_disable();
+	stun_debug_disable();
 #endif
 }
