@@ -28,8 +28,8 @@ class testApp : public ofBaseApp{
 		
 		ofxNiceAgent agentClient;
 		ofxNiceAgent agentServer;
-		ofxNiceStream streamClient;
-		ofxNiceStream streamServer;
+		shared_ptr<ofxNiceStream> streamClient;
+		shared_ptr<ofxNiceStream> streamServer;
 
 		string textToSend;
 };

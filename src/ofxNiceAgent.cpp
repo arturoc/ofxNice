@@ -82,7 +82,7 @@ GMainContext * ofxNiceAgent::getContext(){
 	return ctx;
 }
 
-void ofxNiceAgent::addStream(ofxNiceStream * stream){
+void ofxNiceAgent::addStream(shared_ptr<ofxNiceStream> stream){
 	if(stream->getStreamID()==0) ofLogError() << "trying to add stream that has not been setup yet";
 	streamsIndex[stream->getStreamID()] = stream;
 }

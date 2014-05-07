@@ -3,32 +3,32 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	agentServer.setup("77.72.174.165",3478,true,NULL,NICE_COMPATIBILITY_RFC5245);
-	streamServer.setup(agentServer,1);
-	agentServer.addStream(&streamServer);
-	streamServer.listen();
-	streamServer.gatherLocalCandidates();
-	ofAddListener(streamServer.localCandidatesGathered,this,&testApp::onServerLocalCandidatesGathered);
-	ofAddListener(streamServer.dataReceived,this,&testApp::onServerDataReceived);
+	streamServer->setup(agentServer,1);
+	agentServer.addStream(streamServer);
+	streamServer->listen();
+	streamServer->gatherLocalCandidates();
+	ofAddListener(streamServer->localCandidatesGathered,this,&testApp::onServerLocalCandidatesGathered);
+	ofAddListener(streamServer->dataReceived,this,&testApp::onServerDataReceived);
 
 	agentClient.setup("77.72.174.165",3478,false,NULL,NICE_COMPATIBILITY_RFC5245);
-	streamClient.setup(agentClient,1);
-	agentClient.addStream(&streamClient);
-	streamClient.listen();
-	streamClient.gatherLocalCandidates();
-	ofAddListener(streamClient.localCandidatesGathered,this,&testApp::onClientLocalCandidatesGathered);
-	ofAddListener(streamClient.dataReceived,this,&testApp::onClientDataReceived);
+	streamClient->setup(agentClient,1);
+	agentClient.addStream(streamClient);
+	streamClient->listen();
+	streamClient->gatherLocalCandidates();
+	ofAddListener(streamClient->localCandidatesGathered,this,&testApp::onClientLocalCandidatesGathered);
+	ofAddListener(streamClient->dataReceived,this,&testApp::onClientDataReceived);
 }
 
 void testApp::onClientLocalCandidatesGathered(vector<ofxICECandidate> & candidates){
 	cout << "setting server remote info " << endl;
-	streamServer.setRemoteCredentials(streamClient.getLocalUFrag(),streamClient.getLocalPwd());
-	streamServer.setRemoteCandidates(candidates);
+	streamServer->setRemoteCredentials(streamClient->getLocalUFrag(),streamClient->getLocalPwd());
+	streamServer->setRemoteCandidates(candidates);
 }
 
 void testApp::onServerLocalCandidatesGathered(vector<ofxICECandidate> & candidates){
 	cout << "setting client remote info " << endl;
-	streamClient.setRemoteCredentials(streamServer.getLocalUFrag(),streamServer.getLocalPwd());
-	streamClient.setRemoteCandidates(candidates);
+	streamClient->setRemoteCredentials(streamServer->getLocalUFrag(),streamServer->getLocalPwd());
+	streamClient->setRemoteCandidates(candidates);
 }
 
 void testApp::onServerDataReceived(ofBuffer & data){
@@ -53,8 +53,8 @@ void testApp::keyPressed(int key){
 	if(key!=OF_KEY_RETURN){
 		textToSend += (char)key;
 	}else{
-		streamServer.sendData(textToSend,1);
-		streamClient.sendData(textToSend,1);
+		streamServer->sendData(textToSend,1);
+		streamClient->sendData(textToSend,1);
 		textToSend = "";
 	}
 }

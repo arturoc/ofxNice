@@ -11,6 +11,7 @@
 #include <agent.h>
 #include <map>
 #include "ofConstants.h"
+#include "ofTypes.h"
 
 class ofxNiceStream;
 
@@ -37,7 +38,7 @@ public:
 	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
 
 	/// add a stream to this agent
-	void addStream(ofxNiceStream * stream);
+	void addStream(shared_ptr<ofxNiceStream> stream);
 
 	/// get the internal NiceAgent, usually only for internal usage of the addon
 	NiceAgent * getAgent();
@@ -47,7 +48,7 @@ public:
 private:
 	NiceAgent * agent;
 	GMainContext * ctx;
-	map<guint,ofxNiceStream*> streamsIndex;
+	map<guint,shared_ptr<ofxNiceStream> > streamsIndex;
 
 	// nice callbacks
 	static void cb_candidate_gathering_done(NiceAgent *agent, guint stream_id, ofxNiceAgent * client);
