@@ -40,6 +40,9 @@ public:
 	/// add a stream to this agent
 	void addStream(shared_ptr<ofxNiceStream> stream);
 
+	/// add a TURN server to use for during discovery
+	void addRelay(const string & ip, uint port, const string & user, const string & pwd, NiceRelayType type);
+
 	/// get the internal NiceAgent, usually only for internal usage of the addon
 	NiceAgent * getAgent();
 
@@ -49,6 +52,24 @@ private:
 	NiceAgent * agent;
 	GMainContext * ctx;
 	map<guint,shared_ptr<ofxNiceStream> > streamsIndex;
+
+	struct Relay{
+		Relay(const string & ip, uint port, const string & user, const string & pwd, NiceRelayType type)
+		:ip(ip)
+		,port(port)
+		,user(user)
+		,pwd(pwd)
+		,type(type)
+		{}
+
+		string ip;
+		uint port;
+		string user;
+		string pwd;
+		NiceRelayType type;
+	};
+
+	vector<Relay> relays;
 
 	// nice callbacks
 	static void cb_candidate_gathering_done(NiceAgent *agent, guint stream_id, ofxNiceAgent * client);

@@ -105,6 +105,9 @@ public:
 	/// get the ID of this stream
 	int getStreamID();
 
+	/// get the number of components in this stream
+	int getNumComponents();
+
 	/// get the log name of this stream
 	string getName();
 

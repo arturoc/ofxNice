@@ -78,6 +78,10 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 	}
 }
 
+void ofxNiceAgent::addRelay(const string & ip, uint port, const string & user, const string & pwd, NiceRelayType type){
+	relays.push_back(Relay(ip,port,user,pwd,type));
+}
+
 GMainContext * ofxNiceAgent::getContext(){
 	return ctx;
 }
@@ -85,6 +89,13 @@ GMainContext * ofxNiceAgent::getContext(){
 void ofxNiceAgent::addStream(shared_ptr<ofxNiceStream> stream){
 	if(stream->getStreamID()==0) ofLogError() << "trying to add stream that has not been setup yet";
 	streamsIndex[stream->getStreamID()] = stream;
+
+	for(size_t r=0;r<relays.size();r++){
+		const Relay & relay = relays[r];
+		for(int i=0;i<stream->getNumComponents();i++){
+			nice_agent_set_relay_info(agent,stream->getStreamID(),i+1,relay.ip.c_str(),relay.port,relay.user.c_str(),relay.pwd.c_str(),relay.type);
+		}
+	}
 }
 
 NiceAgent * ofxNiceAgent::getAgent(){

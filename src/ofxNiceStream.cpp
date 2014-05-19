@@ -136,6 +136,10 @@ int ofxNiceStream::getStreamID(){
 	return streamID;
 }
 
+int ofxNiceStream::getNumComponents(){
+	return numberComponents;
+}
+
 
 string ofxNiceStream::getName(){
 	return logName;
