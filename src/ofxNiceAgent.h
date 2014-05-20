@@ -37,6 +37,9 @@ public:
 	/// using and if the connection should be reliable (TCP over UDP)
 	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
 
+	/// setup a proxy, only to be used while using a TURN TCP relay
+	void setProxy(const string & ip, uint port, NiceProxyType type, const string & user="", const string & pwd="");
+
 	/// add a stream to this agent
 	void addStream(shared_ptr<ofxNiceStream> stream);
 
