@@ -47,7 +47,7 @@ void ofxNiceAgent::cb_reliable_transport_writable(NiceAgent *agent, guint stream
 	client->streamsIndex[stream_id]->reliableTransportWritable(component_id);
 }
 
-void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop, NiceCompatibility compatibility, bool reliable){
+void ofxNiceAgent::setup(bool controlling, GMainLoop * mainLoop, NiceCompatibility compatibility, bool reliable){
 	if(mainLoop){
 		ctx = g_main_loop_get_context(mainLoop);
 	}else{
@@ -59,9 +59,6 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 	}else{
 		agent = nice_agent_new(ctx,compatibility);
 	}
-
-	g_object_set(G_OBJECT(agent), "stun-server", stunServer.c_str(), NULL);
-	g_object_set(G_OBJECT(agent), "stun-server-port", stunServerPort, NULL);
 	g_object_set(G_OBJECT(agent), "controlling-mode", controlling?1:0, NULL);
 	//TODO: activating upnp crashes for some reason
 	g_object_set(G_OBJECT(agent), "upnp", FALSE, NULL);
@@ -76,6 +73,11 @@ void ofxNiceAgent::setup(const string & stunServer, int stunServerPort, bool con
 	if(reliable){
 		g_signal_connect(G_OBJECT(agent), "reliable-transport-writable", G_CALLBACK(cb_reliable_transport_writable), this);
 	}
+}
+
+void ofxNiceAgent::setStunServer(const string & ip, uint port){
+	g_object_set(G_OBJECT(agent), "stun-server", ip.c_str(), NULL);
+	g_object_set(G_OBJECT(agent), "stun-server-port", port, NULL);
 }
 
 void ofxNiceAgent::setProxy(const string & ip, uint port, NiceProxyType type, const string & user, const string & pwd){
@@ -112,16 +114,8 @@ void ofxNiceAgent::addStream(shared_ptr<ofxNiceStream> stream){
 
 	for(size_t r=0;r<relays.size();r++){
 		const Relay & relay = relays[r];
-		const char * user=NULL;
-		const char * pwd=NULL;
-		if(relay.user!=""){
-			user = relay.user.c_str();
-		}
-		if(relay.pwd!=""){
-			pwd = relay.pwd.c_str();
-		}
 		for(int i=0;i<stream->getNumComponents();i++){
-			nice_agent_set_relay_info(agent,stream->getStreamID(),i+1,relay.ip.c_str(),relay.port,user,pwd,relay.type);
+			nice_agent_set_relay_info(agent,stream->getStreamID(),i+1,relay.ip.c_str(),relay.port,relay.user.c_str(),relay.pwd.c_str(),relay.type);
 		}
 	}
 }

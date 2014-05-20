@@ -2,7 +2,8 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-	agentServer.setup("77.72.174.165",3478,true,NULL,NICE_COMPATIBILITY_RFC5245);
+	agentServer.setup(true,NULL,NICE_COMPATIBILITY_RFC5245);
+	agentServer.setStunServer("77.72.174.165",3478);
 	streamServer->setup(agentServer,1);
 	agentServer.addStream(streamServer);
 	streamServer->listen();
@@ -10,7 +11,8 @@ void testApp::setup(){
 	ofAddListener(streamServer->localCandidatesGathered,this,&testApp::onServerLocalCandidatesGathered);
 	ofAddListener(streamServer->dataReceived,this,&testApp::onServerDataReceived);
 
-	agentClient.setup("77.72.174.165",3478,false,NULL,NICE_COMPATIBILITY_RFC5245);
+	agentClient.setup(false,NULL,NICE_COMPATIBILITY_RFC5245);
+	agentServer.setStunServer("77.72.174.165",3478);
 	streamClient->setup(agentClient,1);
 	agentClient.addStream(streamClient);
 	streamClient->listen();

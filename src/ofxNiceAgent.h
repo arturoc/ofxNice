@@ -30,21 +30,23 @@ public:
 	ofxNiceAgent();
 	virtual ~ofxNiceAgent();
 
-	/// starts a connection with the STUNT server specifying it's address, port,
 	/// if this side is controlling the connection (usually if it's the side that initiated the
 	/// connection.
 	/// optionally we can specify a glib events loop, the ICE protocol specification we are
 	/// using and if the connection should be reliable (TCP over UDP)
-	void setup(const string & stunServer, int stunServerPort, bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
+	void setup(bool controlling, GMainLoop * mainLoop = NULL, NiceCompatibility compatibility=NICE_COMPATIBILITY_RFC5245, bool reliable=false);
 
-	/// setup a proxy, only to be used while using a TURN TCP relay
+	/// setup a STUN server
+	void setStunServer(const string & ip, uint port);
+
+	/// setup a proxy, only to be used if using a TURN TCP relay
 	void setProxy(const string & ip, uint port, NiceProxyType type, const string & user="", const string & pwd="");
+
+	/// add a TURN server to use during discovery
+	void addRelay(const string & ip, uint port, const string & user, const string & pwd, NiceRelayType type);
 
 	/// add a stream to this agent
 	void addStream(shared_ptr<ofxNiceStream> stream);
-
-	/// add a TURN server to use for during discovery
-	void addRelay(const string & ip, uint port, const string & user, const string & pwd, NiceRelayType type);
 
 	/// get the internal NiceAgent, usually only for internal usage of the addon
 	NiceAgent * getAgent();
